@@ -5,10 +5,10 @@ inputs:
   repository-name:
     required: true
     description: "The name to use for the ECR Repository"
-  from-tag:
+  source-tag:
     required: true
     description: "The from image tag."
-  to-tag:
+  destination-tag:
     required: true
     description: "The to image tag."
 
@@ -20,14 +20,14 @@ runs:
       shell: bash
       env:
         REPOSITORY_NAME: ${{ inputs.repository-name }}
-        FROM_TAG: ${{ inputs.from-tag }}
-        TO_TAG: ${{ inputs.to-tag }}
+        SOURCE_TAG: ${{ inputs.source-tag }}
+        DESTINATION_TAG: ${{ inputs.destination-tag }}
       run: |
-        FROM_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${FROM_TAG}'] | [0].imageDigest")
-        TO_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${TO_TAG}'] | [0].imageDigest")
-        if [[ "${FROM_DIGEST}" = "${TO_DIGEST}" ]]; then
+        SOURCE_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${SOURCE_TAG}'] | [0].imageDigest")
+        DESTINATION_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${DESTINATION_TAG}'] | [0].imageDigest")
+        if [[ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]]; then
           echo "Image already exists, skipped."
         else
-          MANIFEST=$(aws ecr batch-get-image --repository-name "${REPOSITORY_NAME}" --image-ids imageTag="${FROM_TAG}" --query 'images[].imageManifest' --output text)
-          aws ecr put-image --repository-name "${REPOSITORY_NAME}" --image-tag "${TO_TAG}" --image-manifest "${MANIFEST}"
+          MANIFEST=$(aws ecr batch-get-image --repository-name "${REPOSITORY_NAME}" --image-ids imageTag="${SOURCE_TAG}" --query 'images[].imageManifest' --output text)
+          aws ecr put-image --repository-name "${REPOSITORY_NAME}" --image-tag "${DESTINATION_TAG}" --image-manifest "${MANIFEST}"
         fi
