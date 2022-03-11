@@ -1,0 +1,42 @@
+name: Test YAML
+on:
+  push:
+    branches:
+      - test-yaml
+  pull_request:
+    paths:
+      - "**.yml"
+      - "**.yaml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  yamllint:
+    # use pre-installed yamllint
+    # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
+    name: Lint by yamllint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Display yamllint
+        run: yamllint --version
+      - name: Run yamllint
+        run: yamllint --strict .
+
+  prettier:
+    name: Format by prettier
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install prettier
+        run: sudo npm install -g prettier
+      - name: Display prettier
+        run: prettier --version
+      - name: Run prettier
+        run: prettier --check --parser=yaml '**/*.y*ml'
