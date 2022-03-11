@@ -23,6 +23,11 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 #
+# Variables for the directory path
+#
+CLI_CONFIG_DIR ?= .github
+
+#
 # Variables to be used by docker commands
 #
 DOCKER ?= $(shell which docker)
@@ -41,7 +46,7 @@ test-yaml: ## test yaml by yamllint and prettier
 
 .PHONY: test-markdown
 test-markdown: ## test markdown by markdownlint, remark and prettier
-	$(DOCKER_RUN) markdownlint --dot **/*.md
+	$(DOCKER_RUN) markdownlint --dot --config $(CLI_CONFIG_DIR)/.markdownlint.yml **/*.md
 	$(DOCKER_RUN) remark --silently-ignore **/*.md
 	$(DOCKER_RUN) prettier --check --parser=markdown **/*.md
 
