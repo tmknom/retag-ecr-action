@@ -1,0 +1,33 @@
+name: Retag ECR
+description: Retag an image in Amazon ECR without pulling or pushing with Docker.
+
+inputs:
+  repository-name:
+    required: true
+    description: "The name to use for the ECR Repository"
+  from-tag:
+    required: true
+    description: "The from image tag."
+  to-tag:
+    required: true
+    description: "The to image tag."
+
+runs:
+  using: composite
+
+  steps:
+    - name: Retag an image
+      shell: bash
+      env:
+        REPOSITORY_NAME: ${{ inputs.repository-name }}
+        FROM_TAG: ${{ inputs.from-tag }}
+        TO_TAG: ${{ inputs.to-tag }}
+      run: |
+        FROM_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${FROM_TAG}'] | [0].imageDigest")
+        TO_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${TO_TAG}'] | [0].imageDigest")
+        if [[ "${FROM_DIGEST}" = "${TO_DIGEST}" ]]; then
+          echo "Image already exists, skipped."
+        else
+          MANIFEST=$(aws ecr batch-get-image --repository-name "${REPOSITORY_NAME}" --image-ids imageTag="${FROM_TAG}" --query 'images[].imageManifest' --output text)
+          aws ecr put-image --repository-name "${REPOSITORY_NAME}" --image-tag "${TO_TAG}" --image-manifest "${MANIFEST}"
+        fi
