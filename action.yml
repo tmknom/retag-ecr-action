@@ -23,11 +23,17 @@ runs:
         SOURCE_TAG: ${{ inputs.source-tag }}
         DESTINATION_TAG: ${{ inputs.destination-tag }}
       run: |
-        SOURCE_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${SOURCE_TAG}'] | [0].imageDigest")
-        DESTINATION_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" --query "imageIds[?imageTag=='${DESTINATION_TAG}'] | [0].imageDigest")
+        SOURCE_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" \
+                        --query "imageIds[?imageTag=='${SOURCE_TAG}'] | [0].imageDigest")
+        DESTINATION_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" \
+                             --query "imageIds[?imageTag=='${DESTINATION_TAG}'] | [0].imageDigest")
+
         if [[ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]]; then
           echo "Image already exists, skipped."
         else
-          MANIFEST=$(aws ecr batch-get-image --repository-name "${REPOSITORY_NAME}" --image-ids imageTag="${SOURCE_TAG}" --query 'images[].imageManifest' --output text)
-          aws ecr put-image --repository-name "${REPOSITORY_NAME}" --image-tag "${DESTINATION_TAG}" --image-manifest "${MANIFEST}"
+          MANIFEST=$(aws ecr batch-get-image --repository-name "${REPOSITORY_NAME}" \
+                     --image-ids imageTag="${SOURCE_TAG}" --query 'images[].imageManifest' --output text)
+
+          aws ecr put-image --repository-name "${REPOSITORY_NAME}" \
+          --image-tag "${DESTINATION_TAG}" --image-manifest "${MANIFEST}"
         fi
