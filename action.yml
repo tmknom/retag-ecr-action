@@ -23,11 +23,13 @@ runs:
         SOURCE_TAG: ${{ inputs.source-tag }}
         DESTINATION_TAG: ${{ inputs.destination-tag }}
       run: |
+        # Describe image digest
         SOURCE_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" \
                         --query "imageIds[?imageTag=='${SOURCE_TAG}'] | [0].imageDigest")
         DESTINATION_DIGEST=$(aws ecr list-images --repository-name "${REPOSITORY_NAME}" \
                              --query "imageIds[?imageTag=='${DESTINATION_TAG}'] | [0].imageDigest")
 
+        # Put image tag
         if [[ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]]; then
           echo "Image already exists, skipped."
         else
