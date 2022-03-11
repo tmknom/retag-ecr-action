@@ -4,13 +4,13 @@ description: Retag an image in Amazon ECR without pulling or pushing with Docker
 inputs:
   repository-name:
     required: true
-    description: "The name to use for the ECR Repository"
+    description: "The name to use for the ECR Repository."
   source-tag:
     required: true
-    description: "The from image tag."
+    description: "The source tag."
   destination-tag:
     required: true
-    description: "The to image tag."
+    description: "The destination tag."
 
 runs:
   using: composite
