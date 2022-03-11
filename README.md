@@ -1,6 +1,6 @@
 # Retag ECR for GitHub Actions
 
-This action retags an image in Amazon ECR.
+Retag an image in Amazon ECR.
 
 ## Description
 
@@ -10,14 +10,40 @@ This action use only AWS CLI, and not use Docker.
 
 ## Usage
 
+### Basic
+
 ```yaml
 - name: Retag an image in Amazon ECR
   id: retag-ecr
-  uses: tmknom/retag-ecr-action@ba4be15a94c10e85c3e56936e69d1d73390d3318
+  uses: tmknom/retag-ecr-action@v1
   with:
     repository-name: example
-    from-tag: latest
-    to-tag: release
+    source-tag: latest
+    destination-tag: release
+```
+
+### Specify full version
+
+```yaml
+- name: Retag an image in Amazon ECR
+  id: retag-ecr
+  uses: tmknom/retag-ecr-action@v1.0.0
+  with:
+    repository-name: example
+    source-tag: latest
+    destination-tag: release
+```
+
+### Pin commit sha
+
+```yaml
+- name: Retag an image in Amazon ECR
+  id: retag-ecr
+  uses: tmknom/retag-ecr-action@fc1865230f6377aed98dc9670856a4d4c41c715c
+  with:
+    repository-name: example
+    source-tag: latest
+    destination-tag: release
 ```
 
 ## Credentials and Region
@@ -35,11 +61,11 @@ configure the GitHub Actions environment with environment variables containing A
 
 - name: Retag an image in Amazon ECR
   id: retag-ecr
-  uses: tmknom/retag-ecr-action@ba4be15a94c10e85c3e56936e69d1d73390d3318
+  uses: tmknom/retag-ecr-action@v1
   with:
     repository-name: example
-    from-tag: latest
-    to-tag: release
+    source-tag: latest
+    destination-tag: release
 ```
 
 We recommend [Using OpenID Connect within your workflows to authenticate with AWS](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services).
@@ -49,8 +75,8 @@ We recommend [Using OpenID Connect within your workflows to authenticate with AW
 | Name            | Description                             | Default | Required |
 | --------------- | --------------------------------------- | ------- | :------: |
 | repository-name | The name to use for the ECR Repository. | n/a     |   yes    |
-| from-tag        | The from image tag.                     | n/a     |   yes    |
-| to-tag          | The to image tag.                       | n/a     |   yes    |
+| source-tag      | The source tag.                         | n/a     |   yes    |
+| destination-tag | The destination tag.                    | n/a     |   yes    |
 
 ## Outputs
 
@@ -59,6 +85,10 @@ N/A
 ## Environment variables
 
 N/A
+
+## Support virtual environments
+
+- [ubuntu-latest](https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md)
 
 ## Permissions for the `GITHUB_TOKEN`
 
@@ -86,6 +116,43 @@ This action requires the following minimum set of permissions:
     }
   ]
 }
+```
+
+## Developer Guide
+
+### Requirements
+
+- [GNU Make](https://www.gnu.org/software/make/)
+- [GitHub CLI](https://cli.github.com/)
+
+### Update documents
+
+Update usage automatically in [README.md](/README.md).
+
+```shell
+make docs
+```
+
+### Prepare Release
+
+Bump up to new release version.
+
+```shell
+make bump
+```
+
+This command perform the following process:
+
+1. Update [VERSION](/VERSION)
+2. Commit and push
+3. Create a pull request and open the web browser
+
+### Release
+
+Publish new release version.
+
+```shell
+make release
 ```
 
 ## References
