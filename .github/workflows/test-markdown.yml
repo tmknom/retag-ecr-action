@@ -11,6 +11,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CLI_CONFIG_DIR: ".github"
+
 jobs:
   markdownlint:
     name: Lint by markdownlint
@@ -24,7 +27,7 @@ jobs:
       - name: Display markdownlint
         run: markdownlint --version
       - name: Run markdownlint
-        run: markdownlint --dot '**/*.md'
+        run: markdownlint --dot --config "${CLI_CONFIG_DIR}"/.markdownlint.yml '**/*.md'
 
   prettier:
     name: Format by prettier
