@@ -41,7 +41,7 @@ test: test-yaml test-markdown ## test all
 
 .PHONY: test-yaml
 test-yaml: ## test yaml by yamllint and prettier
-	$(DOCKER_RUN) yamllint --strict .
+	$(DOCKER_RUN) yamllint --strict --config-file $(CLI_CONFIG_DIR)/.yamllint.yml .
 	$(DOCKER_RUN) prettier --check --parser=yaml **/*.y*ml
 
 .PHONY: test-markdown

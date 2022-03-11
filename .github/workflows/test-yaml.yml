@@ -12,6 +12,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CLI_CONFIG_DIR: ".github"
+
 jobs:
   yamllint:
     # use pre-installed yamllint
@@ -25,7 +28,7 @@ jobs:
       - name: Display yamllint
         run: yamllint --version
       - name: Run yamllint
-        run: yamllint --strict .
+        run: yamllint --strict --config-file "${CLI_CONFIG_DIR}"/.yamllint.yml .
 
   prettier:
     name: Format by prettier
