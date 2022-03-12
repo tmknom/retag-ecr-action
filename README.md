@@ -132,8 +132,9 @@ make bump
 This command perform the following process:
 
 1. Update [VERSION](/VERSION)
-2. Commit and push
-3. Create a pull request and open the web browser
+2. Update [README.md](/README.md)
+3. Commit and push
+4. Create a pull request and open the web browser
 
 ### Release
 
