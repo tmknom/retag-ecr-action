@@ -134,7 +134,7 @@ This command perform the following process:
 
 ### Release
 
-Publish actions in GitHub Marketplace.
+#### 1. Create a new GitHub Release
 
 ```shell
 make release
@@ -146,8 +146,11 @@ This command perform the following process:
 2. Create a new GitHub Release as a draft
 3. Open the GitHub Release in the web browser
 
-Then, edit the release notes on GitHub.
-If you're ready to publicize your release, click "Publish release".
+#### 2. Publish actions in GitHub Marketplace
+
+1. Click the edit icon on the right side of the page
+2. Edit the release notes
+3. If you're ready to publicize your release, click "Publish release"
 
 ## References
 
