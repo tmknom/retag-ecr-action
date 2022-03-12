@@ -87,6 +87,23 @@ release: ## release
 	git push --force origin "v$${full_version}" && \
 	git push --force origin "v$${major_version}"
 
+bump: input-version commit-version create-pr ## bump version
+
+input-version:
+	@echo "Current version: $$(cat VERSION)" && \
+	read -rp "Input next version: " version && \
+	echo "$${version}" > VERSION
+
+commit-version:
+	version=$$(cat VERSION) && \
+	git switch -c "bump-$${version}" && \
+	git add VERSION && \
+	git commit -m "Bump up to $${version}"
+
+create-pr:
+	git push origin $$(git rev-parse --abbrev-ref HEAD) && \
+	gh pr create --fill --web
+
 #
 # Help
 #
