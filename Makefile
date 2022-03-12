@@ -78,13 +78,21 @@ docs: ## update documents
 #
 # Release management
 #
-release: ## release
-	full_version=$$(cat VERSION) && \
+release: push-tag create-release ## release
+
+push-tag:
+	full_version="v$$(cat VERSION)" && \
 	major_version=$$(echo "$${full_version%%.*}") && \
-	git tag --force "v$${full_version}" && \
-	git tag --force "v$${major_version}" && \
-	git push --force origin "v$${full_version}" && \
-	git push --force origin "v$${major_version}"
+	git tag --force "$${full_version}" && \
+	git tag --force "$${major_version}" && \
+	git push --force origin "$${full_version}" && \
+	git push --force origin "$${major_version}"
+
+create-release:
+	full_version="v$$(cat VERSION)" && \
+	notes="- Release $${full_version}" && \
+	gh release create "$${full_version}" --notes "$${notes}" --draft && \
+	gh release view "$${full_version}" --web
 
 bump: input-version docs commit create-pr ## bump version
 
