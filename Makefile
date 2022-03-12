@@ -91,7 +91,7 @@ push-tag:
 create-release:
 	full_version="v$$(cat VERSION)" && \
 	notes="- Release $${full_version}" && \
-	gh release create "$${full_version}" --notes "$${notes}" --draft && \
+	gh release create "$${full_version}" --title "$${full_version}" --notes "$${notes}" --draft && \
 	echo "Wait GitHub Release creation..." && \
 	sleep 3 && \
 	gh release view "$${full_version}" --web
