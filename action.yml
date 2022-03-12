@@ -39,3 +39,7 @@ runs:
           aws ecr put-image --repository-name "${REPOSITORY_NAME}" \
           --image-tag "${DESTINATION_TAG}" --image-manifest "${MANIFEST}"
         fi
+
+branding:
+  icon: "tag"
+  color: "orange"
