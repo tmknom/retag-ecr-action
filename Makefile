@@ -65,6 +65,17 @@ format-yaml: ## format yaml by prettier
 	$(DOCKER_RUN) prettier --write --parser=yaml **/*.y*ml
 
 #
+# Release management
+#
+release: ## release
+	full_version=$$(cat VERSION) && \
+	major_version=$$(echo "$${full_version%%.*}") && \
+	git tag --force "v$${full_version}" && \
+	git tag --force "v$${major_version}" && \
+	git push --force origin "v$${full_version}" && \
+	git push --force origin "v$${major_version}"
+
+#
 # Help
 #
 .PHONY: help
