@@ -65,6 +65,18 @@ format-yaml: ## format yaml by prettier
 	$(DOCKER_RUN) prettier --write --parser=yaml **/*.y*ml
 
 #
+# Documentation management
+#
+.PHONY: docs
+docs: ## update documents
+	version=$$(cat VERSION) && \
+	commit_sha=$$(git rev-list -n 1 tags/v$${version}) && \
+	awk -v version=$${version} -v commit_sha=$${commit_sha} \
+	    '{sub(/[0-9]+\.[0-9]+\.[0-9]+/, version, $$0); sub(/[0-9a-f]{40}/, commit_sha, $$0); print $$0}' \
+	    README.md > $${TMPDIR}/README.md && \
+	mv $${TMPDIR}/README.md README.md
+
+#
 # Release management
 #
 release: ## release
