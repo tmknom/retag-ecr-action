@@ -39,7 +39,7 @@ This action use only AWS CLI, and not use Docker.
 ```yaml
 - name: Retag an image in Amazon ECR
   id: retag-ecr
-  uses: tmknom/retag-ecr-action@fc1865230f6377aed98dc9670856a4d4c41c715c
+  uses: tmknom/retag-ecr-action@2d011603c282b846479f628395af6b4d32430c64
   with:
     repository-name: example
     source-tag: latest
