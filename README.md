@@ -34,18 +34,6 @@ This action use only AWS CLI, and not use Docker.
     destination-tag: release
 ```
 
-### Pin commit sha
-
-```yaml
-- name: Retag an image in Amazon ECR
-  id: retag-ecr
-  uses: tmknom/retag-ecr-action@2d011603c282b846479f628395af6b4d32430c64
-  with:
-    repository-name: example
-    source-tag: latest
-    destination-tag: release
-```
-
 ## Credentials and Region
 
 Use the [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials) action to
