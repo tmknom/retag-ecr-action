@@ -25,30 +25,47 @@ SHELL := /bin/bash
 #
 # Variables for the directory path
 #
+ROOT_DIR ?= $$($(GIT) rev-parse --show-toplevel)
 CLI_CONFIG_DIR ?= .github
 
 #
-# Variables to be used by docker commands
+# Variables to be used by Git and GitHub CLI
 #
-DOCKER ?= $(shell which docker)
-DOCKER_RUN ?= $(DOCKER) run -i --rm -v $(CURDIR):/work -w /work
+GIT ?= $(shell command -v git)
+GH ?= $(shell command -v gh)
 
 #
-# Tests
+# Variables to be used by Docker
 #
-.PHONY: test
-test: test-yaml test-markdown ## test all
+DOCKER ?= $(shell command -v docker)
+DOCKER_WORK_DIR ?= /work
+DOCKER_RUN_OPTIONS ?=
+DOCKER_RUN_OPTIONS += -it
+DOCKER_RUN_OPTIONS += --rm
+DOCKER_RUN_OPTIONS += -v $(ROOT_DIR):$(DOCKER_WORK_DIR)
+DOCKER_RUN_OPTIONS += -w $(DOCKER_WORK_DIR)
+DOCKER_RUN_SECURE_OPTIONS ?=
+DOCKER_RUN_SECURE_OPTIONS += --security-opt=no-new-privileges
+DOCKER_RUN_SECURE_OPTIONS += --cap-drop all
+DOCKER_RUN_SECURE_OPTIONS += --network none
+DOCKER_RUN ?= $(DOCKER) run $(DOCKER_RUN_OPTIONS)
+SECURE_DOCKER_RUN ?= $(DOCKER_RUN) $(DOCKER_RUN_SECURE_OPTIONS)
 
-.PHONY: test-yaml
-test-yaml: ## test yaml by yamllint and prettier
-	$(DOCKER_RUN) yamllint --strict --config-file $(CLI_CONFIG_DIR)/.yamllint.yml .
-	$(DOCKER_RUN) prettier --check --parser=yaml **/*.y*ml
+#
+# Lint
+#
+.PHONY: lint
+lint: lint-yaml lint-markdown ## lint all
 
-.PHONY: test-markdown
-test-markdown: ## test markdown by markdownlint, remark and prettier
-	$(DOCKER_RUN) markdownlint --dot --config $(CLI_CONFIG_DIR)/.markdownlint.yml **/*.md
-	$(DOCKER_RUN) remark --silently-ignore **/*.md
-	$(DOCKER_RUN) prettier --check --parser=markdown **/*.md
+.PHONY: lint-yaml
+lint-yaml: ## lint yaml by yamllint and prettier
+	$(SECURE_DOCKER_RUN) yamllint --strict --config-file $(CLI_CONFIG_DIR)/.yamllint.yml .
+	$(SECURE_DOCKER_RUN) prettier --check --parser=yaml **/*.y*ml
+
+.PHONY: lint-markdown
+lint-markdown: ## lint markdown by markdownlint and prettier
+	$(SECURE_DOCKER_RUN) markdownlint --dot --config $(CLI_CONFIG_DIR)/.markdownlint.yml **/*.md
+	$(SECURE_DOCKER_RUN) prettier --check --parser=markdown **/*.md
 
 #
 # Format code
@@ -58,11 +75,11 @@ format: format-markdown format-yaml ## format all
 
 .PHONY: format-markdown
 format-markdown: ## format markdown by prettier
-	$(DOCKER_RUN) prettier --write --parser=markdown **/*.md
+	$(SECURE_DOCKER_RUN) prettier --write --parser=markdown **/*.md
 
 .PHONY: format-yaml
 format-yaml: ## format yaml by prettier
-	$(DOCKER_RUN) prettier --write --parser=yaml **/*.y*ml
+	$(SECURE_DOCKER_RUN) prettier --write --parser=yaml **/*.y*ml
 
 #
 # Documentation management
@@ -83,18 +100,18 @@ release: push-tag create-release ## release
 push-tag:
 	full_version="v$$(cat VERSION)" && \
 	major_version=$$(echo "$${full_version%%.*}") && \
-	git tag --force "$${full_version}" && \
-	git tag --force "$${major_version}" && \
-	git push --force origin "$${full_version}" && \
-	git push --force origin "$${major_version}"
+	$(GIT) tag --force "$${full_version}" && \
+	$(GIT) tag --force "$${major_version}" && \
+	$(GIT) push --force origin "$${full_version}" && \
+	$(GIT) push --force origin "$${major_version}"
 
 create-release:
 	full_version="v$$(cat VERSION)" && \
 	notes="- Release $${full_version}" && \
-	gh release create "$${full_version}" --title "$${full_version}" --notes "$${notes}" --draft && \
+	$(GH) release create "$${full_version}" --title "$${full_version}" --notes "$${notes}" --draft && \
 	echo "Wait GitHub Release creation..." && \
 	sleep 3 && \
-	gh release view "$${full_version}" --web
+	$(GH) release view "$${full_version}" --web
 
 bump: input-version docs commit create-pr ## bump version
 
@@ -105,15 +122,15 @@ input-version:
 
 commit:
 	version=$$(cat VERSION) && \
-	git switch -c "bump-$${version}" && \
-	git add VERSION && \
-	git commit -m "Bump up to $${version}" && \
-	git add README.md && \
-	git commit -m "Update docs to $${version}"
+	$(GIT) switch -c "bump-$${version}" && \
+	$(GIT) add VERSION && \
+	$(GIT) commit -m "Bump up to $${version}" && \
+	$(GIT) add README.md && \
+	$(GIT) commit -m "Update docs to $${version}"
 
 create-pr:
-	git push origin $$(git rev-parse --abbrev-ref HEAD) && \
-	gh pr create --fill --web
+	$(GIT) push origin $$($(GIT) rev-parse --abbrev-ref HEAD) && \
+	$(GH) pr create --fill --web
 
 #
 # Help
