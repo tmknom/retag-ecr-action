@@ -1,8 +1,8 @@
-name: Test Markdown
+name: Lint Markdown
 on:
   push:
     branches:
-      - test-markdown
+      - lint-markdown
   pull_request:
     paths:
       - "**.md"
