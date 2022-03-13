@@ -25,7 +25,7 @@ SHELL := /bin/bash
 #
 # Variables for the directory path
 #
-ROOT_DIR ?= $$($(GIT) rev-parse --show-toplevel)
+ROOT_DIR ?= $(shell $(GIT) rev-parse --show-toplevel)
 CLI_CONFIG_DIR ?= .github
 
 #
@@ -98,20 +98,20 @@ docs: ## update documents
 release: push-tag create-release ## release
 
 push-tag:
-	full_version="v$$(cat VERSION)" && \
-	major_version=$$(echo "$${full_version%%.*}") && \
-	$(GIT) tag --force "$${full_version}" && \
+	version="v$$(cat VERSION)" && \
+	major_version=$$(echo "$${version%%.*}") && \
+	$(GIT) tag --force "$${version}" && \
 	$(GIT) tag --force "$${major_version}" && \
-	$(GIT) push --force origin "$${full_version}" && \
+	$(GIT) push --force origin "$${version}" && \
 	$(GIT) push --force origin "$${major_version}"
 
 create-release:
-	full_version="v$$(cat VERSION)" && \
-	notes="- Release $${full_version}" && \
-	$(GH) release create "$${full_version}" --title "$${full_version}" --notes "$${notes}" --draft && \
+	version="v$$(cat VERSION)" && \
+	notes="- Release $${version}" && \
+	$(GH) release create "$${version}" --title "$${version}" --notes "$${notes}" --draft && \
 	echo "Wait GitHub Release creation..." && \
 	sleep 3 && \
-	$(GH) release view "$${full_version}" --web
+	$(GH) release view "$${version}" --web
 
 bump: input-version docs commit create-pr ## bump version
 
@@ -121,7 +121,7 @@ input-version:
 	echo "$${version}" > VERSION
 
 commit:
-	version=$$(cat VERSION) && \
+	version="v$$(cat VERSION)" && \
 	$(GIT) switch -c "bump-$${version}" && \
 	$(GIT) add VERSION && \
 	$(GIT) commit -m "Bump up to $${version}" && \
