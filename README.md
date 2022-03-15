@@ -74,11 +74,11 @@ N/A
 
 N/A
 
-## Permissions for the `GITHUB_TOKEN`
+## `GITHUB_TOKEN` Permissions
 
-There are no required permissions for this action itself.
+N/A
 
-## Permissions for AWS IAM Policy
+## AWS IAM Policy Permissions
 
 This action requires the following minimum set of permissions:
 
@@ -150,7 +150,7 @@ This command perform the following process:
 
 1. Click the edit icon on the right side of the page
 2. Edit the release notes
-3. If you're ready to publicize your release, click "Publish release"
+3. If you're ready to publicize your release, click `Publish release` :rocket:
 
 ## References
 
