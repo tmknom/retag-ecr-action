@@ -31,13 +31,13 @@ CLI_CONFIG_DIR ?= .github
 #
 # Variables to be used by Git and GitHub CLI
 #
-GIT ?= $(shell command -v git)
-GH ?= $(shell command -v gh)
+GIT ?= $(shell \command -v git 2>/dev/null)
+GH ?= $(shell \command -v gh 2>/dev/null)
 
 #
 # Variables to be used by Docker
 #
-DOCKER ?= $(shell command -v docker)
+DOCKER ?= $(shell \command -v docker 2>/dev/null)
 DOCKER_WORK_DIR ?= /work
 DOCKER_RUN_OPTIONS ?=
 DOCKER_RUN_OPTIONS += -it
@@ -86,9 +86,9 @@ format-yaml: ## format yaml by prettier
 #
 .PHONY: docs
 docs: ## update documents
-	version=$$(cat VERSION) && \
-	awk -v version=$${version} \
-	    '{sub(/[0-9]+\.[0-9]+\.[0-9]+/, version, $$0); print $$0}' \
+	version="$$(cat VERSION)" && \
+	awk -v action_version="action@v$${version}" \
+	    '{sub(/action@v[0-9]+\.[0-9]+\.[0-9]+/, action_version, $$0); print $$0}' \
 	    README.md > $${TMPDIR}/README.md && \
 	mv $${TMPDIR}/README.md README.md
 
@@ -129,8 +129,9 @@ commit:
 	$(GIT) commit -m "Update docs to $${version}"
 
 create-pr:
+	version="v$$(cat VERSION)" && \
 	$(GIT) push origin $$($(GIT) rev-parse --abbrev-ref HEAD) && \
-	$(GH) pr create --fill --web
+	$(GH) pr create --title "Bump up to $${version}" --body "" --web
 
 #
 # Help
