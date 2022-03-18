@@ -1,41 +1,21 @@
 name: Lint Markdown
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - lint-markdown
+    paths:
+      - ".github/workflows/lint-markdown.yml"
   pull_request:
     paths:
       - "**.md"
+
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  markdownlint:
-    name: Lint by markdownlint
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install markdownlint
-        run: sudo npm install -g markdownlint-cli
-      - name: Display markdownlint
-        run: markdownlint --version
-      - name: Run markdownlint
-        run: markdownlint --dot --config .markdownlint.yml '**/*.md'
-
-  prettier:
-    name: Format by prettier
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install prettier
-        run: sudo npm install -g prettier
-      - name: Display prettier
-        run: prettier --version
-      - name: Run prettier
-        run: prettier --check --parser=markdown '**/*.md'
+  lint-markdown:
+    uses: tmknom/workflows/.github/workflows/lint-markdown.yml@v1
+    with:
+      markdownlint-config: ".markdownlint.yml"
