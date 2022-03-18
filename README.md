@@ -117,40 +117,50 @@ Update usage automatically in [README.md](/README.md).
 make docs
 ```
 
-### Prepare Release
+### Release
 
-Bump up to new release version.
+#### 1. Bump up to a new version
+
+Run the following command to bump up.
 
 ```shell
 make bump
 ```
 
-This command perform the following process:
+This command will execute the following steps:
 
 1. Update [VERSION](/VERSION)
 2. Update [README.md](/README.md)
 3. Commit and push
-4. Create a pull request and open the web browser
+4. Create a pull request
+5. Open the web browser automatically for reviewing pull request
 
-### Release
+Then review and merge, so the release is ready to go.
 
-#### 1. Create a new GitHub Release
+#### 2. Create a new GitHub Release
+
+Run the following command to create a new release.
 
 ```shell
 make release
 ```
 
-This command perform the following process:
+This command will execute the following steps:
 
 1. Push tag
 2. Create a new GitHub Release as a draft
-3. Open the GitHub Release in the web browser
+3. Open the web browser automatically for editing GitHub Release
 
-#### 2. Publish actions in GitHub Marketplace
+#### 3. Publish actions in GitHub Marketplace
+
+Edit to publicize the GitHub Release.
 
 1. Click the edit icon on the right side of the page
 2. Edit the release notes
-3. If you're ready to publicize your release, click `Publish release` :rocket:
+3. Click `Publish release`
+
+Then, the new version are published in GitHub Marketplace.
+Finally, we can use the new version! :tada:
 
 ## References
 
