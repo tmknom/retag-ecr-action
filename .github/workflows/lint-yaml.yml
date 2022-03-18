@@ -1,42 +1,22 @@
 name: Lint YAML
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - lint-yaml
+    paths:
+      - ".github/workflows/lint-yaml.yml"
   pull_request:
     paths:
       - "**.yml"
       - "**.yaml"
+
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  yamllint:
-    # use pre-installed yamllint
-    # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
-    name: Lint by yamllint
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Display yamllint
-        run: yamllint --version
-      - name: Run yamllint
-        run: yamllint --strict --config-file .yamllint.yml .
-
-  prettier:
-    name: Format by prettier
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install prettier
-        run: sudo npm install -g prettier
-      - name: Display prettier
-        run: prettier --version
-      - name: Run prettier
-        run: prettier --check --parser=yaml '**/*.y*ml'
+  lint-yaml:
+    uses: tmknom/workflows/.github/workflows/lint-yaml.yml@v1
+    with:
+      yamllint-config: ".yamllint.yml"
