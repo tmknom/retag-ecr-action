@@ -41,5 +41,5 @@ runs:
         fi
 
 branding:
-  icon: "tag"
-  color: "orange"
+  color: green
+  icon: shield
